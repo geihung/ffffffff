@@ -3,6 +3,14 @@ import streamlit as st
 
 st.set_page_config(page_title="KBO 프로야구 시뮬레이터", page_icon="⚾")
 
+
+def safe_rerun():
+    if hasattr(st, "rerun"):
+        st.rerun()
+    else:
+        st.experimental_rerun()
+
+
 PITCHES = ["포심", "투심", "슬라이더", "커브", "너클볼"]
 
 HOME_TEAM = {
@@ -90,30 +98,4 @@ def advance_runners(hit_type):
         st.session_state.bases = [False, False, True]
     elif hit_type == "2루타":
         runs = sum([b2, b3])
-        st.session_state.bases = [False, True, b1]
-    elif hit_type == "1루타":
-        runs = 1 if b3 else 0
-        st.session_state.bases = [True, b1, b2]
-    elif hit_type == "볼넷":
-        if b1 and b2 and b3:
-            runs = 1
-            st.session_state.bases = [True, True, True]
-        elif b1 and b2:
-            st.session_state.bases = [True, True, True]
-        elif b1:
-            st.session_state.bases = [True, True, b3]
-        else:
-            st.session_state.bases = [True, b2, b3]
-
-    if runs > 0:
-        if st.session_state.is_top:
-            st.session_state.away_score += runs
-            add_log(f"🚨 삼성 {runs}점 득점!")
-        else:
-            st.session_state.home_score += runs
-            add_log(f"🎉 KIA {runs}점 득점!")
-
-
-def add_out(reason):
-    st.session_state.outs += 1
-    reset_count()
+        st.session_state.bases = [False,
